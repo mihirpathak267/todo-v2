@@ -17,10 +17,23 @@ main().catch(err => console.log(err));
  
 async function main() {
   await mongoose.connect('mongodb://localhost:27017/FruitsDB');
-  }
-async function main(){
-    await mongoose.connect("mongodb://localhost:27017/todolistDB");
 }
+// creating a new schema for todo items
+const itemsSchema = new mongoose.Schema({
+    name: String
+});
+// creating a new model to use the above schema
+const Item  = new mongoose.model("Item", itemsSchema);
+// creating default items to show when the page loads up
+const item1 = new Item({
+    name: "Welcome to the Todo app."
+});
+const item2 = new Item({
+    name: "Hit the '+' button to add new items to the list."
+});
+const item3 = new Item({
+    name:"<---- Click on the checkbox once you're done with the task."
+});
 
 app.listen(3000, function() {
   console.log("Server started on port 3000");
