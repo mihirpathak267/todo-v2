@@ -16,7 +16,7 @@ app.use(express.static("public"));
 main().catch(err => console.log(err));
  
 async function main() {
-  await mongoose.connect('mongodb://localhost:27017/FruitsDB');
+  await mongoose.connect('mongodb://localhost:27017/todolistDB');
 }
 // creating a new schema for todo items
 const itemsSchema = new mongoose.Schema({
@@ -34,6 +34,15 @@ const item2 = new Item({
 const item3 = new Item({
     name:"<---- Click on the checkbox once you're done with the task."
 });
+const defaultArray = [item1, item2, item3];
+// insert default items into the database
+Item.insertMany(defaultArray, function(err){
+    if (err){
+        console.log(err);
+    } else {
+        console.log("Successfully added default items to DB")
+    }
+})
 
 app.listen(3000, function() {
   console.log("Server started on port 3000");
