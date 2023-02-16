@@ -1,0 +1,25 @@
+{
+  "name": "todo-v2",
+  "version": "1.0.0",
+  "description": "This is the update version of the simple todo-v1, where we can persist data using a database in the backend.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mihirpathak267/todo-v2.git"
+  },
+  "author": "Mihir Pathak",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mihirpathak267/todo-v2/issues"
+  },
+  "homepage": "https://github.com/mihirpathak267/todo-v2#readme",
+  "dependencies": {
+    "body-parser": "^1.20.1",
+    "ejs": "^3.1.8",
+    "express": "^4.18.2",
+    "mongoose": "^6.9.1"
+  }
+}
