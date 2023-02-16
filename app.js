@@ -36,22 +36,26 @@ const item3 = new Item({
 });
 const defaultArray = [item1, item2, item3];
 // insert default items into the database
-// Item.insertMany(defaultArray, function(err){
-//     if (err){
-//         console.log(err);
-//     } else {
-//         console.log("Successfully added default items to DB")
-//     }
-// });
+
+// using find method to read from database and render items on the home page
 app.get("/", function(req, res){
+
     Item.find({}, function(err, foundItems){
-        if (err){
-            console.log(err);
+        if (foundItems.length == 0){
+            Item.insertMany(defaultArray, function(err){
+                if (err){
+                    console.log(err);
+                } else {
+                    console.log("Successfully added default items to DB");
+                }   
+            });
+            res.redirect("/");
         }else{
             res.render("list",{listTitle: "Today", newListItems: foundItems});
         }
-        
     })
+        
+    
 });
 
 app.listen(3000, function() {
