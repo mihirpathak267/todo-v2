@@ -69,6 +69,18 @@ app.post("/", function(req, res){
     item.save();
     // Render the home route which now renders the new item
     res.redirect("/")
+});
+
+app.post("/delete", function(req, res){
+    const checkedItemId = req.body.checkbox;
+    Item.findByIdAndRemove(checkedItemId, function(err, docs){
+        if (err){
+            console.log(err);
+        }else {
+            console.log("Removed item: ",docs);
+            res.redirect("/");
+        }
+    })
 })
 
 app.listen(3000, function() {
