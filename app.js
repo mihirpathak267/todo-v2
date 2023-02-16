@@ -17,7 +17,7 @@ main().catch(err => console.log(err));
  
 async function main() {
   await mongoose.connect('mongodb://localhost:27017/todolistDB');
-}
+};
 // creating a new schema for todo items
 const itemsSchema = new mongoose.Schema({
     name: String
@@ -36,13 +36,23 @@ const item3 = new Item({
 });
 const defaultArray = [item1, item2, item3];
 // insert default items into the database
-Item.insertMany(defaultArray, function(err){
-    if (err){
-        console.log(err);
-    } else {
-        console.log("Successfully added default items to DB")
-    }
-})
+// Item.insertMany(defaultArray, function(err){
+//     if (err){
+//         console.log(err);
+//     } else {
+//         console.log("Successfully added default items to DB")
+//     }
+// });
+app.get("/", function(req, res){
+    Item.find({}, function(err, foundItems){
+        if (err){
+            console.log(err);
+        }else{
+            res.render("list",{listTitle: "Today", newListItems: foundItems});
+        }
+        
+    })
+});
 
 app.listen(3000, function() {
   console.log("Server started on port 3000");
