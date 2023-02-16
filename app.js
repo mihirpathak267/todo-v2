@@ -34,14 +34,16 @@ const item2 = new Item({
 const item3 = new Item({
     name:"<---- Click on the checkbox once you're done with the task."
 });
+// store the default items into an array to push them all at once
 const defaultArray = [item1, item2, item3];
-// insert default items into the database
+
 
 // using find method to read from database and render items on the home page
 app.get("/", function(req, res){
 
     Item.find({}, function(err, foundItems){
         if (foundItems.length == 0){
+            // insert default items into the database
             Item.insertMany(defaultArray, function(err){
                 if (err){
                     console.log(err);
@@ -57,6 +59,17 @@ app.get("/", function(req, res){
         
     
 });
+
+app.post("/", function(req, res){
+    const itemName = req.body.newItem;
+    const item = new Item({
+        name: itemName
+    });
+    // Use using mongoose shortcut save instead of insertOne
+    item.save();
+    // Render the home route which now renders the new item
+    res.redirect("/")
+})
 
 app.listen(3000, function() {
   console.log("Server started on port 3000");
