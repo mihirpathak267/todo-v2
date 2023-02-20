@@ -37,11 +37,12 @@ const item3 = new Item({
 // store the default items into an array to push them all at once
 const defaultArray = [item1, item2, item3];
 
+// creating a new Schema for custom lists, name will have the name of the list.
 const listSchema = new mongoose.Schema({
     name: String,
     items: [itemsSchema]
 });
-
+// creating a model for the above Schema
 const List = new mongoose.model("List", listSchema);
 
 
@@ -94,26 +95,50 @@ app.get("/:customListName", function(req, res){
 
 app.post("/", function(req, res){
     const itemName = req.body.newItem;
+    const listName = req.body.list;
+
     const item = new Item({
         name: itemName
     });
-    // Use using mongoose shortcut save instead of insertOne
-    item.save();
-    // Render the home route which now renders the new item
-    res.redirect("/")
+
+    if (listName == "Today"){
+        // Use using mongoose shortcut save instead of insertOne
+        item.save();
+        // Render the home route which now renders the new item
+        res.redirect("/")        
+    } else{
+        List.findOne({name: listName}, function(err, foundList){
+            if (!err){
+                foundList.items.push(item);
+                foundList.save();
+                res.redirect("/" + listName);
+            } else {
+                console.log(err);
+            };
+        });
+    };
+    
 });
 
 app.post("/delete", function(req, res){
     const checkedItemId = req.body.checkbox;
+    const listName = req.body.listName
+if (listName === "Today"){
     Item.findByIdAndRemove(checkedItemId, function(err, docs){
-        if (err){
-            console.log(err);
-        }else {
-            console.log("Removed item: ",docs);
+        if (!err){
+            console.log("Removed item: " ,docs);
             res.redirect("/");
         }
-    })
-})
+    });
+}else{
+    List.findOneAndUpdate({name: listName}, {$pull: {items: {_id: checkedItemId}}}, function(err, foundList){
+        if (!err){
+            res.redirect("/"+listName);
+        };
+
+    });
+};
+});
 
 app.listen(3000, function() {
   console.log("Server started on port 3000");
