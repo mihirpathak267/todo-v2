@@ -37,6 +37,13 @@ const item3 = new Item({
 // store the default items into an array to push them all at once
 const defaultArray = [item1, item2, item3];
 
+const listSchema = new mongoose.Schema({
+    name: String,
+    items: [itemsSchema]
+});
+
+const List = new mongoose.model("List", listSchema);
+
 
 // using find method to read from database and render items on the home page
 app.get("/", function(req, res){
@@ -59,6 +66,31 @@ app.get("/", function(req, res){
         
     
 });
+// Using express routing params to get custom list names and see if they exist then create it
+app.get("/:customListName", function(req, res){
+    const customListName = req.params.customListName;
+    List.findOne({name: customListName}, function(err, foundList){
+        if(!err){
+            if (!foundList){
+                const list = List({
+                    name: customListName,
+                    items: defaultArray
+                });
+                list.save();
+                res.redirect("/"+ customListName);
+            
+            } else {
+
+                res.render("list", {listTitle: foundList.name, newListItems: foundList.items});
+            }
+            
+            
+        } else{
+            res.render("list", {listTitle: customListName, newListItems: foundList})
+        }
+    })
+})
+
 
 app.post("/", function(req, res){
     const itemName = req.body.newItem;
