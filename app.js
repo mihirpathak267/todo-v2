@@ -1,7 +1,9 @@
 // require all the packages and the date module
+require('dotenv').config()
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
+const _ = require("lodash");
 const date = require(__dirname + "/date.js");
 mongoose.set('strictQuery', false);
 // set the express() app
@@ -13,11 +15,14 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
 
 // connect to the database
-main().catch(err => console.log(err));
- 
-async function main() {
-  await mongoose.connect('mongodb://localhost:27017/todolistDB');
-};
+mongoose.connect(process.env.MONGODB_URL, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    serverSelectionTimeoutMS: 5000, // wait up to 5 seconds for server selection
+    socketTimeoutMS: 45000,
+  })
+  .then(() => console.log('MongoDB connected'))
+  .catch((err) => console.log('MongoDB connection error:', err));
 // creating a new schema for todo items
 const itemsSchema = new mongoose.Schema({
     name: String
@@ -69,7 +74,8 @@ app.get("/", function(req, res){
 });
 // Using express routing params to get custom list names and see if they exist then create it
 app.get("/:customListName", function(req, res){
-    const customListName = req.params.customListName;
+    const customListName = _.capitalize(req.params.customListName);
+    
     List.findOne({name: customListName}, function(err, foundList){
         if(!err){
             if (!foundList){
@@ -140,6 +146,6 @@ if (listName === "Today"){
 };
 });
 
-app.listen(3000, function() {
+app.listen(process.env.PORT, function() {
   console.log("Server started on port 3000");
 });
